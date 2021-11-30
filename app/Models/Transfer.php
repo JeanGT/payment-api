@@ -16,6 +16,11 @@ class Transfer extends Model
         'account_to',
     ];
 
+    public static function createTransfer($transfer){
+        //TODO -> validation and trigger account creation
+        return Transfer::create($transfer);
+    }
+
     public function from(){
         return $this->belongsTo(Account::class, 'account_from', 'id');
     }
