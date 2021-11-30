@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,8 +17,21 @@ class Transaction extends Model
         'account_id'
     ];
 
+    //Ensures that all withdrawals have negative values and all deposits have positive values
     public static function createTransaction($transaction){
-        //TODO -> validation and trigger account creation
+        $account = Account::find($transaction['account_id']);
+        
+        if($transaction['value'] < 0) throw new Exception("0", 400);
+        
+        if($transaction['type'] == 'withdraw'){
+            if(!$account) throw new Exception("0", 404);
+            if($account->balance < $transaction['value']) throw new Exception("0", 400);
+
+            $transaction['value'] *= -1;
+        } else if (!$account){
+            $account = Account::createAccount($transaction['account_id']);
+        }
+
         return Transaction::create($transaction);
     }
 
